@@ -1,0 +1,215 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model HomeResources {
+  id       Int     @id @default(autoincrement())
+  title    String?
+  subTitle String?
+  url      String?
+  image    String?
+  desc     String?
+  module   String?
+  type     String?
+  icon     String?
+  order    Int     @default(100)
+
+  @@map("home_resources")
+}
+
+model Users {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String
+  name      String?
+  type      Int       @default(0)
+  expired   DateTime?
+  status    Int       @default(0)
+  phone     Int
+  email     String?
+  unionId   String?
+  openId    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  courses     Courses[]
+  attachments Attachments[]
+
+  @@map("users")
+}
+
+model Courses {
+  id          Int      @id @default(autoincrement())
+  title       String
+  subTitle    String?
+  desc        String?
+  coverId     Int?     @unique
+  author      Int
+  originPrice Int?
+  price       Int?
+  status      Int      @default(0)
+  counts      Int      @default(0)
+  order       Int      @default(1000)
+  detail      String?
+  type        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  contents CoursesContents[]
+  users    Users             @relation(fields: [author], references: [id])
+
+  cover          Attachments?     @relation(fields: [coverId], references: [id])
+  tags           CoursesOnTags[]
+  courseComments CourseComments[]
+
+  @@map("courses")
+}
+
+model CoursesContents {
+  id        Int      @id @default(autoincrement())
+  courseId  Int
+  title     String?
+  type      String?
+  order     Int      @default(1000)
+  pid       Int?
+  status    Int      @default(0)
+  author    Int
+  tagId     String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  course    Courses  @relation(fields: [courseId], references: [id])
+
+  parent           CoursesContents?   @relation("CoursesContentsRelation", fields: [pid], references: [id])
+  children         CoursesContents[]  @relation("CoursesContentsRelation")
+  contentsComments ContentsComments[]
+
+  @@map("courses_contents")
+}
+
+model Attachments {
+  id       Int     @id @default(autoincrement())
+  type     String?
+  location String?
+  name     String?
+  ossType  String?
+  usersId  Int
+  status   Int     @default(0)
+  desc     String?
+
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+  user       Users                  @relation(fields: [usersId], references: [id])
+  course     Courses[]
+  attributes AttachmentAttributes[]
+
+  @@map("attachments")
+}
+
+model AttachmentAttributes {
+  id           Int          @id @default(autoincrement())
+  attachmentId Int?
+  attributeId  Int
+  value        String?
+  desc         String?
+  attachments  Attachments? @relation(fields: [attachmentId], references: [id])
+  attributes   Attributes   @relation(fields: [attributeId], references: [id])
+
+  @@map("attachments_attributes")
+}
+
+model Attributes {
+  id   Int     @id @default(autoincrement())
+  type String?
+  name String
+  desc String
+
+  attachmentAttributes AttachmentAttributes[]
+
+  @@map("dict_attachment_attributes")
+}
+
+model CourseTags {
+  id     Int             @id @default(autoincrement())
+  name   String          @unique
+  typeId Int?
+  order  Int             @default(1000)
+  status Int             @default(0)
+  types  CourseTypes?    @relation(fields: [typeId], references: [id])
+  tags   CoursesOnTags[]
+
+  @@map("dict_course_tags")
+}
+
+model CourseTypes {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  order  Int    @default(1000)
+  status Int    @default(0)
+
+  tags CourseTags[]
+
+  @@map("dict_course_types")
+}
+
+model CoursesOnTags {
+  id       Int        @id @default(autoincrement())
+  courseId Int
+  tagId    Int
+  course   Courses    @relation(fields: [courseId], references: [id])
+  tag      CourseTags @relation(fields: [tagId], references: [id])
+
+  @@map("courses_tags")
+}
+
+model Comments {
+  id      Int    @id @default(autoincrement())
+  pid     Int?
+  userId  Int
+  content String
+  hands   Int    @default(0)
+  status  Int    @default(1)
+  isBest  Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent           Comments?          @relation("CommentsRelation", fields: [pid], references: [id])
+  children         Comments[]         @relation("CommentsRelation")
+  CourseComments   CourseComments[]
+  ContentsComments ContentsComments[]
+
+  @@map("comments")
+}
+
+model CourseComments {
+  id        Int      @id @default(autoincrement())
+  courseId  Int
+  commentId Int
+  comment   Comments @relation(fields: [commentId], references: [id])
+  Courses   Courses? @relation(fields: [coursesId], references: [id])
+  coursesId Int?
+
+  @@map("courses_comments")
+}
+
+model ContentsComments {
+  id        Int             @id @default(autoincrement())
+  contentId Int
+  commentId Int
+  status    Int             @default(1)
+  comment   Comments        @relation(fields: [commentId], references: [id])
+  content   CoursesContents @relation(fields: [contentId], references: [id])
+
+  @@map("contents_comments")
+}
