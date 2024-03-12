@@ -1,11 +1,4 @@
-import {
-  IsIn,
-  IsInt,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUrl,
-} from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateHomeDto {
   @IsString()

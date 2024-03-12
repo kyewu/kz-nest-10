@@ -11,8 +11,8 @@ import {
   Query,
 } from '@nestjs/common';
 import { HomeService } from './home.service';
-import { UpdateHomeDto } from './update-home.dto';
-import { CreateHomeDto } from './create-home.dto';
+import { UpdateHomeDto } from './dto/update-home.dto';
+import { CreateHomeDto } from './dto/create-home.dto';
 
 @Controller('home')
 export class HomeController {

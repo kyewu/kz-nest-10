@@ -1,8 +1,8 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HomeResources } from '@prisma/client';
-import { CreateHomeDto } from './create-home.dto';
-import { UpdateHomeDto } from './update-home.dto';
+import { CreateHomeDto } from './dto/create-home.dto';
+import { UpdateHomeDto } from './dto/update-home.dto';
 
 @Injectable()
 export class HomeService {

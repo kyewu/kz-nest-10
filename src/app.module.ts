@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { utilities as nestWinstonModuleUtilities, WinstonModule } from 'nest-winston';
 import { HomeModule } from './modules/home/home.module';
+import { CourseModule } from './modules/course/course.module';
 import * as winston from 'winston';
 import  DailyRotateFile from 'winston-daily-rotate-file';
 
@@ -46,7 +47,7 @@ function createDailyRotateTrnsport(level:string, filename: string) {
       ])
      
     ],
-  }), HomeModule],
+  }), HomeModule, CourseModule],
   controllers: [AppController],
   providers: [AppService],
 })
