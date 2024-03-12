@@ -128,13 +128,13 @@ model Attributes {
 }
 
 model CourseTags {
-  id     Int             @id @default(autoincrement())
-  name   String          @unique
-  typeId Int?
-  order  Int             @default(1000)
-  status Int             @default(0)
-  tags   CoursesOnTags[]
-  types  CourseTypes?    @relation(fields: [typeId], references: [id])
+  id      Int             @id @default(autoincrement())
+  name    String          @unique
+  typeId  Int?
+  order   Int             @default(1000)
+  status  Int             @default(0)
+  courses CoursesOnTags[]
+  types   CourseTypes?    @relation(fields: [typeId], references: [id])
 
   @@map("dict_course_tags")
 }

@@ -19,6 +19,17 @@ export class CourseService {
     return this.prisma.courses.create({ data: dto });
   }
 
+  getCourseByType() {
+    return this.prisma.courseTypes.findMany({
+      include: {
+        tags: {
+          include: {
+            courses: true,
+          },
+        },
+      },
+    });
+  }
   // createCourseWithTags(dto: CreateCourseDto) {
   //   return this.prisma.courses.create({
   //     data: {

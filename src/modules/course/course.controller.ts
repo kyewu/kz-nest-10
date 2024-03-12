@@ -1,4 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseWithTagsDto } from './dto/create-course.dto';
 
@@ -15,5 +15,10 @@ export class CourseController {
       return this.courseService.createCourse({ ...dto, tags });
     }
     return this.courseService.createCourse(dto);
+  }
+
+  @Get()
+  async getCourse() {
+    return this.courseService.getCourseByType();
   }
 }
