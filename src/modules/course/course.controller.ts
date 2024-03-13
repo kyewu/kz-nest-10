@@ -1,6 +1,7 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseWithTagsDto } from './dto/create-course.dto';
+import { GetCoursesByTypeDto } from './dto/get-course-type.dto';
 
 @Controller('course')
 export class CourseController {
@@ -18,7 +19,7 @@ export class CourseController {
   }
 
   @Get()
-  async getCourse() {
-    return this.courseService.getCourseByType();
+  async getCourse(@Query() dto: GetCoursesByTypeDto) {
+    return this.courseService.getCourseByType(dto);
   }
 }

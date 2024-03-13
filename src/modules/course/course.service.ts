@@ -9,6 +9,7 @@ import {
   CreateCourseWithTagsInterface,
 } from './dto/create-course.dto';
 import { CreateCoursesOnTagsDto } from './dto/create-course-tag.dto';
+import { GetCoursesByTypeDto } from './dto/get-course-type.dto';
 
 @Injectable()
 export class CourseService {
@@ -19,8 +20,12 @@ export class CourseService {
     return this.prisma.courses.create({ data: dto });
   }
 
-  getCourseByType() {
+  getCourseByType(dto: GetCoursesByTypeDto) {
+    const take = dto?.size || 10;
+    const skip = dto.page ? (dto.page - 1) * take : 0;
     return this.prisma.courseTypes.findMany({
+      take,
+      skip,
       include: {
         tags: {
           include: {
@@ -30,6 +35,7 @@ export class CourseService {
       },
       orderBy: {
         order: 'asc',
+        ...dto.order,
       },
     });
   }
