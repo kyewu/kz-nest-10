@@ -28,6 +28,9 @@ export class CourseService {
           },
         },
       },
+      orderBy: {
+        order: 'asc',
+      },
     });
   }
   // createCourseWithTags(dto: CreateCourseDto) {
