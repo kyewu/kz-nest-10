@@ -36,7 +36,11 @@ export class CourseService {
           include: {
             courses: {
               include: {
-                course: true,
+                course: {
+                  include: {
+                    users: true,
+                  },
+                },
               },
             },
           },

@@ -3,6 +3,8 @@ import { CourseService } from './course.service';
 import { CreateCourseWithTagsDto } from './dto/create-course.dto';
 import { GetCoursesByTypeDto } from './dto/get-course-type.dto';
 import { BigintTransformInterceptor } from '@/core/interceptors';
+import { PublicGetCoursesDto } from './dto/public-get-courses.dto';
+import { Serialize } from '@/core/decorators';
 
 @Controller('course')
 @UseInterceptors(new BigintTransformInterceptor())
@@ -21,8 +23,24 @@ export class CourseController {
   }
 
   @Get()
-  async getCourse(@Query() dto: GetCoursesByTypeDto) {
-    console.log(dto);
-    return this.courseService.getCourseByType(dto);
+  // @UseInterceptors(new SerializeInterceptor(PublicGetCoursesDto, false))
+  @Serialize(PublicGetCoursesDto, false)
+  async getCourseByType(
+    @Query() dto: GetCoursesByTypeDto,
+  ): Promise<PublicGetCoursesDto[]> {
+    const res = await this.courseService.getCourseByType(dto);
+    if (res && res.length) {
+      const data = res.map((o) => {
+        return {
+          id: o.id,
+          name: o.name,
+          courses: o.tags.reduce((pre, current) => {
+            return [...pre, ...current.courses.map((course) => course.course)];
+          }, []),
+        };
+      });
+      return data;
+    }
+    return [];
   }
 }
