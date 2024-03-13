@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query, UseInterceptors } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CreateCourseWithTagsDto } from './dto/create-course.dto';
 import { GetCoursesByTypeDto } from './dto/get-course-type.dto';
+import { BigintTransformInterceptor } from '@/core/interceptors';
 
 @Controller('course')
+@UseInterceptors(new BigintTransformInterceptor())
 export class CourseController {
   constructor(private courseService: CourseService) {}
 
@@ -20,6 +22,7 @@ export class CourseController {
 
   @Get()
   async getCourse(@Query() dto: GetCoursesByTypeDto) {
+    console.log(dto);
     return this.courseService.getCourseByType(dto);
   }
 }

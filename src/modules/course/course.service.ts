@@ -24,12 +24,21 @@ export class CourseService {
     const take = dto?.size || 10;
     const skip = dto.page ? (dto.page - 1) * take : 0;
     return this.prisma.courseTypes.findMany({
+      where: {
+        id: {
+          in: dto.types ?? [],
+        },
+      },
       take,
       skip,
       include: {
         tags: {
           include: {
-            courses: true,
+            courses: {
+              include: {
+                course: true,
+              },
+            },
           },
         },
       },
